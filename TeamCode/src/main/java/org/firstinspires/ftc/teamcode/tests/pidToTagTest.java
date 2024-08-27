@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.vision.AprilTagManager;
 @Config
 @TeleOp
 public class pidToTagTest extends LinearOpMode {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.09,  0, 0),
-            HEADING_PID = new PIDCoefficients(0.01, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.09,  0.015, 0.0025),
+            HEADING_PID = new PIDCoefficients(0.03, 0, 0.0001);
 
-    public static double TARGET_X = 0, TARGET_Y = 15, TARGET_HEADING = 0;
+    public static double TARGET_X = 0, TARGET_Y = 15, TARGET_HEADING = 180;
 
     public static double CONTINUOUS_DRIVE_TIME = 0.25;
     public static int TARGET_ID = 4;
@@ -29,7 +29,7 @@ public class pidToTagTest extends LinearOpMode {
         at = new AprilTagManager(hardwareMap);
         at.buildPortal();
         drive = new SampleMecanumDrive(hardwareMap);
-
+        drive.setPoseEstimate(new Pose2d(0,0,Math.PI));
         PIDController xPIDControl = new PIDController();
         PIDController yPIDControl = new PIDController();
         PIDController headingPIDControl = new PIDController();
@@ -45,7 +45,11 @@ public class pidToTagTest extends LinearOpMode {
         double lastRunTime = 0;
         double loopTime;
         while (opModeIsActive()) {
+            drive.updatePoseEstimate();
             at.update(TARGET_ID);
+
+            double robotHeading = drive.getPoseEstimate().getHeading();
+            robotHeading = Math.toDegrees(robotHeading);
 
             xPIDControl.setPID(TRANSLATIONAL_PID.kP,TRANSLATIONAL_PID.kI,TRANSLATIONAL_PID.kD);
             yPIDControl.setPID(TRANSLATIONAL_PID.kP,TRANSLATIONAL_PID.kI,TRANSLATIONAL_PID.kD);
@@ -57,7 +61,7 @@ public class pidToTagTest extends LinearOpMode {
             if (noTagTime.seconds() < CONTINUOUS_DRIVE_TIME || at.getTagCount() > 0) {
                 double xPower = -xPIDControl.PIDControl(0, at.targetTag.getX() - TARGET_X);
                 double yPower = yPIDControl.PIDControl(0, at.targetTag.getZ() - TARGET_Y);
-                double pivotPower = headingPIDControl.PIDControl(0, -at.targetTag.getYaw() - TARGET_HEADING);
+                double pivotPower = headingPIDControl.PIDControl(0, robotHeading - TARGET_HEADING);
 
                 drivePower = new Pose2d(yPower, xPower, pivotPower);
             }
@@ -78,6 +82,8 @@ public class pidToTagTest extends LinearOpMode {
             telemetry.addData("x", at.targetTag.getX());
             telemetry.addData("y", at.targetTag.getY());
             telemetry.addData("z", at.targetTag.getZ());
+            telemetry.addLine();
+            telemetry.addData("Robot Heading", robotHeading);
             telemetry.addLine();
             telemetry.addData("Last Tag ID", at.lastTag.getId());
             telemetry.addLine();
