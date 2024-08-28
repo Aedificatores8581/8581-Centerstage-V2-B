@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.tests;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,8 +13,8 @@ import org.firstinspires.ftc.teamcode.hardware.ButtonDown;
 import org.firstinspires.ftc.teamcode.hardware.PIDController;
 import org.firstinspires.ftc.teamcode.vision.AprilTagManager;
 
-@Config
-@TeleOp
+@Disabled
+@TeleOp (name = "PID To April Tag Test (Old)")
 public class pidToTagTest extends LinearOpMode {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.09,  0.015, 0.0025),
             HEADING_PID = new PIDCoefficients(0.03, 0, 0.0001);
@@ -54,8 +55,6 @@ public class pidToTagTest extends LinearOpMode {
         double lastRunTime = 0;
         double loopTime;
         while (opModeIsActive()) {
-            decreaseAngle.update(gamepad1.left_bumper);
-            increaseAngle.update(gamepad1.right_bumper);
             drive.updatePoseEstimate();
             at.update(TARGET_ID);
 

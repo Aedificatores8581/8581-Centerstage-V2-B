@@ -36,8 +36,8 @@ public class AprilTagDrive {
     }
     robotStatus currentStatus = robotStatus.IDLE;
     public AprilTagDrive(HardwareMap hw, SampleMecanumDrive drive) {
-        this.hardwareMap = hw;
         this.drive = drive;
+        this.hardwareMap = hw;
         at = new AprilTagManager(hardwareMap);
         at.buildPortal();
     }
@@ -48,30 +48,33 @@ public class AprilTagDrive {
     }
     public void runToTag(int id, Pose2d offset) {
         at.update(id);
-        double robotHeading = drive.getPoseEstimate().getHeading();
+        double robotHeading = Math.toDegrees(drive.getPoseEstimate().getHeading());
+        if (robotHeading > 180) {robotHeading = (robotHeading - 360);}
+        final boolean tagFound = at.getTagCount() > 0;
 
-        noTag.update(at.getTagCount() > 0);
-        if (noTagTime.seconds() < CONTINUOUS_DRIVE_TIME || at.getTagCount() > 0) {
+        Pose2d drivePower = new Pose2d(0,0,0);
+        
+        if (noTagTime.seconds() < CONTINUOUS_DRIVE_TIME || tagFound) {
             updatePIDFromConfig();
             double xMultiplier = 1;
             if (STRAFE_COMPENSATION) {
                 xMultiplier = 1.1;
             }
-            Pose2d drivePower = new Pose2d(
+            drivePower = new Pose2d(
                     yPIDControl.PIDControl(0, at.targetTag.getZ() - offset.getY()),
                     -xPIDControl.PIDControl(0, at.targetTag.getX() - offset.getX()) * xMultiplier,
-                    headingPIDControl.PIDControl(0, robotHeading - offset.getY())
+                    headingPIDControl.PIDControl(0, robotHeading - offset.getHeading())
             );
-
-            drive.setWeightedDrivePower(drivePower);
             currentStatus = robotStatus.DRIVING_TO_TAG;
             isBusy = true;
-            if (drivePower.getX() < 0.05 && drivePower.getY() < 0.05 && drivePower.getHeading() < 0.05) {
-                isBusy = false; currentStatus = robotStatus.IDLE;}
         }
         else {
             currentStatus = robotStatus.TAG_NOT_FOUND;
         }
+        drive.setWeightedDrivePower(drivePower);
+
+        if (drivePower.getX() < 0.05 && drivePower.getY() < 0.05 && drivePower.getHeading() < 0.05) {
+            isBusy = false; currentStatus = robotStatus.IDLE;}
     }
     public final AprilTagManager getAt() {return at;}
     public void stop() {
