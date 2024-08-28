@@ -18,7 +18,7 @@ public class pidToTagTest extends LinearOpMode {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.09,  0.015, 0.0025),
             HEADING_PID = new PIDCoefficients(0.03, 0, 0.0001);
 
-    public static double TARGET_X = 0, TARGET_Y = 15, TARGET_HEADING = 180;
+    public static double TARGET_X = 0, TARGET_Y = 15, TARGET_HEADING = 0;
 
     public static double CONTINUOUS_DRIVE_TIME = 0.25;
     public static int TARGET_ID = 4;
