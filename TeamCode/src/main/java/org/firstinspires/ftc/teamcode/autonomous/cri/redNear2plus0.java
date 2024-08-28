@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.intake.arm;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.vision.AprilTagPortal;
 import org.firstinspires.ftc.teamcode.vision.callNewPipeline;
 import org.firstinspires.ftc.teamcode.vision.propProcessor;
 
@@ -16,7 +15,6 @@ import org.firstinspires.ftc.teamcode.vision.propProcessor;
 public class redNear2plus0 extends LinearOpMode {
     SampleMecanumDrive drive;
     callNewPipeline cp;
-    AprilTagPortal at;
     arm arm;
 
     int armBackdrop = 2185;

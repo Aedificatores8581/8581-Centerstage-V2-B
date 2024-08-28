@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tests;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.ButtonDown;
 import org.firstinspires.ftc.teamcode.hardware.PIDController;
 
 
+@Config
 @TeleOp (name = "PID To April Tag Test (New)")
 public class pidToTagTest2 extends LinearOpMode {
 
@@ -28,7 +30,12 @@ public class pidToTagTest2 extends LinearOpMode {
         double loopTime;
         while (opModeIsActive()) {
             drive.updatePoseEstimate();
-            atDrive.runToTag(TARGET_ID, new Pose2d(TARGET_X, TARGET_Y, TARGET_HEADING));
+
+            if (gamepad1.a) {
+                drive.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x));
+            } else {
+                atDrive.runToTag(TARGET_ID, new Pose2d(TARGET_X, TARGET_Y, TARGET_HEADING));
+            }
 
             loopTime = runTime.seconds() - lastRunTime;
             loopTime *= 1000;
@@ -37,6 +44,7 @@ public class pidToTagTest2 extends LinearOpMode {
             loopTime /= 100;
             lastRunTime = runTime.seconds();
 
+            telemetry.addData("Error", atDrive.getError());
             telemetry.addData("ATDrive Status", atDrive.getCurrentStatus());
             telemetry.addData("ATDrive Busy", atDrive.isBusy());
             telemetry.addLine();

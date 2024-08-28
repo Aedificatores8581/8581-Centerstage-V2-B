@@ -35,6 +35,7 @@ public class AprilTagDrive {
         IDLE
     }
     robotStatus currentStatus = robotStatus.IDLE;
+    Pose2d error = new Pose2d(0,0,0);
     public AprilTagDrive(HardwareMap hw, SampleMecanumDrive drive) {
         this.drive = drive;
         this.hardwareMap = hw;
@@ -53,17 +54,21 @@ public class AprilTagDrive {
         final boolean tagFound = at.getTagCount() > 0;
 
         Pose2d drivePower = new Pose2d(0,0,0);
-        
+
         if (noTagTime.seconds() < CONTINUOUS_DRIVE_TIME || tagFound) {
             updatePIDFromConfig();
             double xMultiplier = 1;
             if (STRAFE_COMPENSATION) {
                 xMultiplier = 1.1;
             }
+            error = new Pose2d(
+                    at.targetTag.getX() - offset.getX(),
+                    at.targetTag.getZ() - offset.getY(),
+                    robotHeading - offset.getHeading());
             drivePower = new Pose2d(
-                    yPIDControl.PIDControl(0, at.targetTag.getZ() - offset.getY()),
-                    -xPIDControl.PIDControl(0, at.targetTag.getX() - offset.getX()) * xMultiplier,
-                    headingPIDControl.PIDControl(0, robotHeading - offset.getHeading())
+                    yPIDControl.PIDControl(0, error.getY()),
+                    -xPIDControl.PIDControl(0, error.getX()) * xMultiplier,
+                    headingPIDControl.PIDControl(0, error.getHeading())
             );
             currentStatus = robotStatus.DRIVING_TO_TAG;
             isBusy = true;
@@ -74,7 +79,8 @@ public class AprilTagDrive {
         drive.setWeightedDrivePower(drivePower);
 
         if (drivePower.getX() < 0.05 && drivePower.getY() < 0.05 && drivePower.getHeading() < 0.05) {
-            isBusy = false; currentStatus = robotStatus.IDLE;}
+            isBusy = false; currentStatus = robotStatus.IDLE;
+        }
     }
     public final AprilTagManager getAt() {return at;}
     public void stop() {
@@ -87,4 +93,5 @@ public class AprilTagDrive {
         return currentStatus;
     }
     public boolean isBusy() {return isBusy;}
+    public Pose2d getError() {return error;}
 }
