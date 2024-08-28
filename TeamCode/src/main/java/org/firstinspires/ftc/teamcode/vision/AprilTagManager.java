@@ -26,7 +26,7 @@ public class AprilTagManager {
     WebcamName webcam;
     public AprilTagManager(HardwareMap hw) {
         hardwareMap = hw;
-        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcam = hardwareMap.get(WebcamName.class, "Global Cam");
         AprilTagProcessor.Builder myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
         tagProcessor = myAprilTagProcessorBuilder
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)

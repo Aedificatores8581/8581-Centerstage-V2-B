@@ -29,7 +29,7 @@ public class pidToTagTest extends LinearOpMode {
         at = new AprilTagManager(hardwareMap);
         at.buildPortal();
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(0,0,Math.PI));
+        drive.setPoseEstimate(new Pose2d(0,0,0));
         PIDController xPIDControl = new PIDController();
         PIDController yPIDControl = new PIDController();
         PIDController headingPIDControl = new PIDController();
@@ -50,6 +50,9 @@ public class pidToTagTest extends LinearOpMode {
 
             double robotHeading = drive.getPoseEstimate().getHeading();
             robotHeading = Math.toDegrees(robotHeading);
+            if (robotHeading > 180) {
+                robotHeading = (robotHeading - 360);
+            }
 
             xPIDControl.setPID(TRANSLATIONAL_PID.kP,TRANSLATIONAL_PID.kI,TRANSLATIONAL_PID.kD);
             yPIDControl.setPID(TRANSLATIONAL_PID.kP,TRANSLATIONAL_PID.kI,TRANSLATIONAL_PID.kD);
