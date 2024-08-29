@@ -8,13 +8,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.AprilTagDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.hardware.ButtonDown;
-import org.firstinspires.ftc.teamcode.hardware.PIDController;
 
 
 @Config
-@TeleOp (name = "PID To April Tag Test (New)")
-public class pidToTagTest2 extends LinearOpMode {
+@TeleOp (name = "PID To April Tag Test")
+public class pidToTagTest extends LinearOpMode {
 
     public static double TARGET_X = 0, TARGET_Y = 15, TARGET_HEADING = 0;
     public static int TARGET_ID = 4;

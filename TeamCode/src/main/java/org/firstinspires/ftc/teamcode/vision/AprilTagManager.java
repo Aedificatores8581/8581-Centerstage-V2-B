@@ -33,13 +33,20 @@ public class AprilTagManager {
                 .setLensIntrinsics(907.659, 907.659, 659.985, 357.874) // For Global Shutter Camera
                 .build();
     }
-    public void buildPortal() {
+    public void buildPortal(int... args) {
+        int liveViewContainerId = -1;
+        if (args.length > 0) {
+            liveViewContainerId = args[0];
+        }
         VisionPortal.Builder portalBuilder = new VisionPortal.Builder()
                 .setCamera(webcam)
                 .addProcessor(tagProcessor)
                 .setCameraResolution(new Size(1280, 720))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .setAutoStopLiveView(true);
+        if (liveViewContainerId != -1) {
+            portalBuilder.setLiveViewContainerId(liveViewContainerId);
+        }
         portal = portalBuilder.build();
     }
     public void setPortal(VisionPortal visionPortal) {

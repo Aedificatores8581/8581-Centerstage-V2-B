@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.vision.AprilTagManager;
 
 @Config
 public class AprilTagDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.09,  0.015, 0.0025),
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.09,  0.005, 0.004),
             HEADING_PID = new PIDCoefficients(0.03, 0, 0.0001);
     public static double CONTINUOUS_DRIVE_TIME = 0.25;
     public static boolean STRAFE_COMPENSATION = true;
@@ -36,11 +36,18 @@ public class AprilTagDrive {
     }
     robotStatus currentStatus = robotStatus.IDLE;
     Pose2d error = new Pose2d(0,0,0);
-    public AprilTagDrive(HardwareMap hw, SampleMecanumDrive drive) {
+    public AprilTagDrive(HardwareMap hw, SampleMecanumDrive drive, int... args) {
+        int liveViewContainerId = -1;
+        if (args.length > 0) {
+            liveViewContainerId = args[0];
+        }
         this.drive = drive;
         this.hardwareMap = hw;
         at = new AprilTagManager(hardwareMap);
-        at.buildPortal();
+        if (liveViewContainerId != -1)
+            at.buildPortal(liveViewContainerId);
+        else
+            at.buildPortal();
     }
     private void updatePIDFromConfig() {
         xPIDControl.setPID(TRANSLATIONAL_PID.kP,TRANSLATIONAL_PID.kI,TRANSLATIONAL_PID.kD);
